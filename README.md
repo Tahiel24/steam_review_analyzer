@@ -34,9 +34,9 @@ Confundir ambas cosas lleva a gastar semanas de desarrollo arreglando algo que n
 
 <!-- 📸 TODO: agregar 2-3 capturas o un GIF corto del flujo completo (selección de juego → gráfico de anomalías → informe generado) -->
 
-- Selector de juego con métricas clave (reseñas analizadas, tasa de negatividad, anomalías críticas detectadas)
-- Serie temporal interactiva con las anomalías marcadas sobre el gráfico
+- Grafico con el volumen de reseñas sobre un juego elegido y el porcentaje de reseñas negativas sobre el mismo
 - Asistente de triage: consulta en lenguaje natural → evidencia recuperada de reseñas reales → informe generado en streaming
+- Analisis de sentimiento de una reseña
 
 ## Arquitectura
 
@@ -139,6 +139,17 @@ Cada fase queda documentada como notebook independiente, con el razonamiento det
 - [ ] Deploy público (Render / HF Spaces)
 - [ ] Bot de Discord como cliente alternativo de la API
 - [ ] Evaluación cuantitativa de la detección de anomalías contra más casos históricos documentados
+
+## Limitación identificada: oraciones con estructura adversativa
+
+Durante pruebas manuales del clasificador se observó un patrón consistente: en reseñas con estructura adversativa (elogio inicial + crítica introducida por "but"/"however"), el modelo tiende a clasificar según la polaridad de la primera cláusula, subestimando la cláusula crítica que sigue. Por ejemplo:
+
+> *"It's a good game but it has many problems related with FPS when you enter in determinated zones"* → clasificado como **Positivo (97.86% confianza)**
+
+**Mitigaciones planificadas:**
+1. **Aspect-Based Sentiment Analysis (ABSA)**: desacoplar la evaluación global hacia un análisis por entidades (rendimiento, gráficos, jugabilidad, monetización), en vez de una polaridad única por reseña.
+2. **Data augmentation con estructuras contrastivas**: reentrenamiento incorporando ejemplos sintéticos con conectores adversativos (`but`, `however`, `although`) para forzar al modelo a ponderar la cláusula resolutiva.
+3. **Inferencia híbrida en cascada**: derivar hacia el LLM (Groq) los casos con baja confianza o presencia de conectores disyuntivos, para desambiguación contextual que el clasificador binario no puede resolver por sí solo.
 
 ## Licencia
 
