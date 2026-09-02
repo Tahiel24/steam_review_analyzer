@@ -90,12 +90,17 @@ def search_semantic_evidence(
 ) -> dict:
     """
     Realiza la búsqueda semántica en ChromaDB aplicando filtrado híbrido:
-    - Filtra por reseña insatisfecha ('No Recomendado').
-    - Filtra opcionalmente por videojuego ('app_name').
+    - filter_negative_only = True -> 'No Recomendado'
+    - filter_negative_only = False -> 'Recomendado'
+    - filter_negative_only = None -> Sin filtro de voto
     """
     where_conditions = []
-    if filter_negative_only:
+    
+    if filter_negative_only is True:
         where_conditions.append({"recommended": "No Recomendado"})
+    elif filter_negative_only is False:
+        where_conditions.append({"recommended": "Recomendado"})
+
     if app_name:
         where_conditions.append({"app_name": app_name})
 

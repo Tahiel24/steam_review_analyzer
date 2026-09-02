@@ -22,29 +22,29 @@ def stream_llm_report(
     model_name: str = "openai/gpt-oss-20b"
 ) -> Generator[str, None, None]:
     """
-    Genera el Resumen Ejecutivo en streaming vía Groq reproduciendo
-    fielmente la configuración y el prompt de la Fase 6.
+    Genera el Resumen Ejecutivo en streaming vía Groq adaptándose
+    al tipo de consulta (técnica, positiva, de balance o general).
     """
-    evidence_block = "\n\n".join(evidence_texts) if evidence_texts else "No se recuperaron fragmentos textuales directos."
+    evidence_block = "\n\n".join(evidence_texts) if evidence_texts else "No se recuperaron fragmentos textuales directos para este criterio."
 
     prompt = f"""Actúa como un Lead Data & Game Analyst de alto nivel técnico.
-Tu tarea es generar un Resumen Ejecutivo claro, formal y procesable en ESPAÑOL para el equipo de desarrollo (Product Managers y Tech Leads) sobre un incidente de insatisfacción detectado en las reseñas de Steam.
+Tu tarea es generar un Resumen Ejecutivo claro, formal y procesable en ESPAÑOL para el equipo de producto y desarrollo sobre las reseñas de Steam.
 
-### METADATOS DEL INCIDENTE
+### METADATOS DEL ANÁLISIS
 * Videojuego: {game_name}
-* Consulta / Motivo de Análisis: "{user_query}"
+* Pregunta / Consulta del Analista: "{user_query}"
 
-### EVIDENCIA CUALITATIVA RECUPERADA (RESEÑAS REALES)
+### EVIDENCIA CUALITATIVA RECUPERADA DE RESEÑAS REALES
 {evidence_block}
 
 ---
 ### INSTRUCCIONES DE FORMATO
-Redacta el informe con la siguiente estructura concisa:
-1. **Diagnóstico General**: Qué pasó y si representa un boicot artificial o un fallo legítimo del producto (considera la consistencia técnica de las quejas y las horas jugadas reflejadas en la evidencia para descartar un boicot con cuentas nuevas).
-2. **Patrones Técnicos / Jugabilidad Clave**: Síntesis de las quejas recurrentes extraídas de la evidencia textual.
-3. **Acciones Recomendadas**: 2 o 3 directivas técnicas concretas y priorizadas para el equipo de desarrollo.
+Responde estrictamente a la pregunta planteada apoyándote en la evidencia recuperada, siguiendo esta estructura:
+1. **Diagnóstico General**: Respuesta directa a la consulta según lo observado en las reseñas. Si la consulta es sobre aspectos positivos y hay evidencia, destácalos; si es sobre quejas técnicas o rendimiento, evalúa la gravedad y consistencia del problema.
+2. **Patrones Clave y Evidencia**: Síntesis de los temas o mecánicas recurrentes extraídos de las reseñas citadas.
+3. **Recomendaciones / Conclusión**: 2 o 3 directivas concretas para el equipo de desarrollo o producto (ya sea para potenciar lo que funciona o corregir fallas reportadas).
 
-Mantene un tono profesional, técnico y directo al grano, sin rodeos introductorios. Si se te pregunta por otra tarea o actividad fuera de las enlistadas aqui debes responder que no podes ayudar con eso"""
+Mantene un tono profesional, técnico y directo al grano, sin rodeos introductorios. Si se te pregunta por un tema ajeno al análisis de reseñas del videojuego, indica amablemente que solo estás capacitado para analizar feedback de jugadores."""
 
     stream = client.chat.completions.create(
         model=model_name,
