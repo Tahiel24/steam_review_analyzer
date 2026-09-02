@@ -34,9 +34,9 @@ Confundir ambas cosas lleva a gastar semanas de desarrollo arreglando algo que n
 
 <!-- 📸 TODO: agregar 2-3 capturas o un GIF corto del flujo completo (selección de juego → gráfico de anomalías → informe generado) -->
 
-- Selector de juego con métricas clave (reseñas analizadas, tasa de negatividad, anomalías críticas detectadas)
-- Serie temporal interactiva con las anomalías marcadas sobre el gráfico
+- Grafico con el volumen de reseñas sobre un juego elegido y el porcentaje de reseñas negativas sobre el mismo
 - Asistente de triage: consulta en lenguaje natural → evidencia recuperada de reseñas reales → informe generado en streaming
+- Analisis de sentimiento de una reseña
 
 ## Arquitectura
 
